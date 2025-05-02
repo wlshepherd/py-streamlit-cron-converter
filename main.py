@@ -22,47 +22,50 @@ def display_human_readable_format():
     with st.form("cron_form"):
         cron_expression = st.text_input("Enter your cron expression:")
         submitted_button = st.form_submit_button("Convert")
-        if submitted_button:
-            if cron_expression:
-                try:
-                    inputs = cron_expression.split()
-                    user_input_minutes, user_input_hours, user_input_days, user_input_months, user_input_weeks = inputs
+        if submitted_button and cron_expression:
+            try:
+                inputs = cron_expression.split()
+                user_input_minutes, user_input_hours, user_input_days, user_input_months, user_input_weeks = inputs
                     
-                    results = {
-                        "minute_result": cron_time_converter(user_input_minutes, MINUTES_RANGE[0], MINUTES_RANGE[1], "minute"),
-                        "hour_result": cron_time_converter(user_input_hours, HOURS_RANGE[0], HOURS_RANGE[1], "hour"),
-                        "day_result": cron_time_converter(user_input_days, DAYS_RANGE[0], DAYS_RANGE[1], "day"),
-                        "month_result": cron_time_converter(user_input_months, MONTH_RANGE[0], MONTH_RANGE[1], "month"),
-                        "weekday_result": cron_time_converter(user_input_weeks, WEEK_RANGE[0], WEEK_RANGE[1], "weekday"),
-                     }
+                results = {
+                    "minute_result": cron_time_converter(user_input_minutes, MINUTES_RANGE[0], MINUTES_RANGE[1], "minute"),
+                    "hour_result": cron_time_converter(user_input_hours, HOURS_RANGE[0], HOURS_RANGE[1], "hour"),
+                    "day_result": cron_time_converter(user_input_days, DAYS_RANGE[0], DAYS_RANGE[1], "day"),
+                    "month_result": cron_time_converter(user_input_months, MONTH_RANGE[0], MONTH_RANGE[1], "month"),
+                    "weekday_result": cron_time_converter(user_input_weeks, WEEK_RANGE[0], WEEK_RANGE[1], "weekday"),
+                }
                     
-                    st.write(f"Minutes: {results['minute_result']}")
-                    st.write(f"Hour: {results['hour_result']}")
-                    st.write(f"Day of the Month: {results['day_result']}")
-                    st.write(f"Month: {results['month_result']}")
-                    st.write(f"Day of the Week: {results['weekday_result']}")
+                st.write(f"Minutes: {results['minute_result']}")
+                st.write(f"Hour: {results['hour_result']}")
+                st.write(f"Day of the Month: {results['day_result']}")
+                st.write(f"Month: {results['month_result']}")
+                st.write(f"Day of the Week: {results['weekday_result']}")
                 
-                except Exception as e:
-                    st.error(f"Error: {e}")
-            else:
-                st.warning("Please enter a cron expression.")
+            except Exception as e:
+                st.error(f"Error: {e}")
+        else:
+            st.warning("Please enter a cron expression.")
 
 
 def display_generate_cron_expression():
     """Function to display and combine all parts into a single cron expression."""
     st.subheader("Cron Expression Generator")
-
     with st.form(key="cron_form"):
         minute_option = st.radio("Minute:", options=["All Values (*)", "Single Value", "List of Values", "Range of Values", "Step Values"], key="minute")
         minute_input = st.text_input(f"Enter minute(s) (range: {MINUTES_RANGE[0]}-{MINUTES_RANGE[1]}):", value="*", key="minute_input")
+        
         hour_option = st.radio("Hour:", options=["All Values (*)", "Single Value", "List of Values", "Range of Values", "Step Values"], key="hour")
         hour_input = st.text_input(f"Enter hour(s) (range: {HOURS_RANGE[0]}-{HOURS_RANGE[1]}):", value="*", key="hour_input")
+        
         day_option = st.radio("Day:", options=["All Values (*)", "Single Value", "List of Values", "Range of Values", "Step Values"], key="day")
         day_input = st.text_input(f"Enter day(s) (range: {DAYS_RANGE[0]}-{DAYS_RANGE[1]}):", value="*", key="day_input")
+        
         month_option = st.radio("Month:", options=["All Values (*)", "Single Value", "List of Values", "Range of Values", "Step Values"], key="month")
         month_input = st.text_input(f"Enter month(s) (range: {MONTH_RANGE[0]}-{MONTH_RANGE[1]}):", value="*", key="month_input")
+        
         weekday_option = st.radio("Weekday:", options=["All Values (*)", "Single Value", "List of Values", "Range of Values", "Step Values"], key="weekday")
         weekday_input = st.text_input(f"Enter weekday(s) (range: {WEEK_RANGE[0]}-{WEEK_RANGE[1]}):", value="*", key="weekday_input")
+        
         submit_button = st.form_submit_button(label="Generate Cron Expression")
 
     if submit_button:
@@ -75,6 +78,7 @@ def display_generate_cron_expression():
         if all([minute, hour, day, month, weekday]):
             cron_expression = f"{minute} {hour} {day} {month} {weekday}"
             st.write(f"**Generated Cron Expression:** {cron_expression}")
+            
         else:
             st.error("Error generating cron expression. Please check your inputs.")
         

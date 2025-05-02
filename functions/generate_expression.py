@@ -6,16 +6,19 @@ DAYS_RANGE = (1, 31)
 MONTH_RANGE = (1, 12)
 WEEK_RANGE = (0, 6)
 
+
 def cron_expression_generator(unit, min_value, max_value, option, input_value):
     """Function to generate individual cron expressions based on user input."""
-    if option == "Single Value":
+    if option == "All Values (*)":
+        return "*"
+    
+    elif option == "Single Value":
         if input_value.isdigit() and min_value <= int(input_value) <= max_value:
             return input_value
         else:
             st.error(f"Invalid value for {unit}. Enter a number between {min_value} and {max_value}.")
             return None
-    elif option == "All Values (*)":
-        return "*"
+        
     elif option == "List of Values":
         values = input_value.split(",")
         if all(value.isdigit() and min_value <= int(value) <= max_value for value in values):
@@ -23,24 +26,27 @@ def cron_expression_generator(unit, min_value, max_value, option, input_value):
         else:
             st.error(f"Invalid list for {unit}. Ensure all values are within {min_value}-{max_value}.")
             return None
+        
     elif option == "Range of Values":
-        parts = input_value.split("-")
-        if len(parts) == 2 and parts[0].isdigit() and parts[1].isdigit():
-            start, end = int(parts[0]), int(parts[1])
+        start, end = input_value.split("-")
+        if start.isdigit() and end.isdigit():
+            start, end = int(start), int(end)
             if min_value <= start <= max_value and min_value <= end <= max_value and start <= end:
                 return f"{start}-{end}"
             else:
                 st.error(f"Invalid range for {unit}. Ensure values are within {min_value}-{max_value} and start <= end.")
                 return None
+            
     elif option == "Step Values":
         if "/" in input_value:
-            parts = input_value.split("/")
-            if len(parts) == 2 and parts[1].isdigit():
-                step = int(parts[1])
-                return f"{parts[0]}/{step}"
+            base, step = input_value.split("/")
+            if step.isdigit():
+                step = int(step)
+                return f"{base}/{step}"
             else:
                 st.error(f"Invalid step format for {unit}. Use '*/step' or 'start-end/step'.")
                 return None
+            
     return "*"
 
 
@@ -76,5 +82,6 @@ def display_generate_cron_expression():
         if all([minute, hour, day, month, weekday]):
             cron_expression = f"{minute} {hour} {day} {month} {weekday}"
             st.write(f"**Generated Cron Expression:** {cron_expression}")
+            
         else:
             st.error("Error generating cron expression. Please check your inputs.")
